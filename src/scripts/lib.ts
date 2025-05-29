@@ -1,3 +1,4 @@
+import { PromisePool } from '@supercharge/promise-pool'
 import { ComprehendLanguagesTranslator } from "./ComprehendLanguagesTranslator";
 import { ComprehendLanguages } from "./ComprehendLanguages";
 import { ComprehendLanguagesStatic } from "./statics";
@@ -133,10 +134,19 @@ export async function translate_html(
   target_lang: string
 ): Promise<string> {
   const split_html = _split_at_p(long_html);
-  let translated_html = split_html.map(async (value) => {
-    return await translate_text(value, token, target_lang);
-  });
-  const full_string = await Promise.all(translated_html);
+
+    const full_string = (await PromisePool
+      .for(split_html)
+      .withConcurrency(1)
+      .useCorrespondingResults()      
+      .process(async (htmlpart: string) => {
+          let r = await translate_text(htmlpart, token, target_lang);
+          // same here, give DeepL a breath of 500ms between every translated page to prevent a 429 Too many queries error
+          await new Promise( resolve => setTimeout(resolve, 500) );
+          return r;          
+        }
+      )).results;  
+
   return full_string.join("");
 }
 

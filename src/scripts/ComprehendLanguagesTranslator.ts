@@ -1,3 +1,4 @@
+import { PromisePool } from '@supercharge/promise-pool'
 import { ComprehendLanguages } from "./ComprehendLanguages";
 import { ErrorDialog } from "./ErrorDialog";
 import {
@@ -70,14 +71,20 @@ export class JournalEntryTranslator implements Translator<JournalEntry> {
       makeSeparateFolder
     );
     const pages = documentToTranslate.pages;
-    let newName: string = await determineNewName(documentToTranslate);
-    const newPages = await Promise.all(
-      pages.map(async (page: JournalEntryPage) =>
-        this.translateSinglePage(page, token, target_lang)
-      )
-    ).catch((e) => {
-      new ErrorDialog(e.message);
-    });
+    let newName: string = await determineNewName(documentToTranslate);        
+
+    const newPages = (await PromisePool
+      .for(pages)
+      .withConcurrency(1)
+      .useCorrespondingResults()
+      .process(async (page: JournalEntryPage) => {
+          let r = await this.translateSinglePage(page, token, target_lang);
+          // spend a short wait time after a Journal page to prevent http 429 too many requests on DeepL - yes, makes translate slow but make it completing the task
+          await new Promise( resolve => setTimeout(resolve, 5000) );
+          return r;
+        }
+      )).results;    
+      
     if (newPages) {
       const newJournalEntry = await JournalEntry.createDocuments([
         { ...documentToTranslate, name: newName, folder: folder },
