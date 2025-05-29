@@ -2,11 +2,14 @@ import { PromisePool } from '@supercharge/promise-pool'
 import { ComprehendLanguagesTranslator } from "./ComprehendLanguagesTranslator";
 import { ComprehendLanguages } from "./ComprehendLanguages";
 import { ComprehendLanguagesStatic } from "./statics";
+import { TooManyRequestsError } from "./ErrorClasses";
+
 export interface DeepLTranslation {
   translations: [{ text: string }];
 }
 declare const Hooks: any;
 declare const game: Game;
+declare const ui: any;
 
 Hooks.once("init", () => {
   ComprehendLanguages.initialize();
@@ -135,17 +138,35 @@ export async function translate_html(
 ): Promise<string> {
   const split_html = _split_at_p(long_html);
 
-    const full_string = (await PromisePool
-      .for(split_html)
-      .withConcurrency(1)
-      .useCorrespondingResults()      
-      .process(async (htmlpart: string) => {
-          let r = await translate_text(htmlpart, token, target_lang);
-          // same here, give DeepL a breath of 500ms between every translated page to prevent a 429 Too many queries error
-          await new Promise( resolve => setTimeout(resolve, 500) );
-          return r;          
+  const full_string = (await PromisePool
+    .for(split_html)
+    .withConcurrency(1)
+    .useCorrespondingResults()
+    .process(async (htmlpart: string) => {
+
+      let isSuccessfull : boolean = false;
+      let r: string;
+      let waitFactor: number = 2;
+      while(!isSuccessfull)
+      {
+        try {
+          isSuccessfull = true;
+          r = await translate_text(htmlpart, token, target_lang);          
+        } catch(error) {
+          if (error instanceof TooManyRequestsError)
+          {
+            isSuccessfull = false;
+            let waitTime: number = waitFactor * 100;
+            waitFactor = waitFactor * 2;
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+          }
         }
-      )).results;  
+      }
+      // same here, give DeepL a breath of 500ms between every translated page to prevent a 429 Too many queries error
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return r;
+    }
+    )).results;
 
   return full_string.join("");
 }
@@ -186,6 +207,8 @@ export async function translate_text(
   if (response.status == 200) {
     let translation: DeepLTranslation = await response.json();
     return translation.translations[0].text;
+  } else if (response.status == 429) {
+      throw new TooManyRequestsError("Too many request to API, slow down");
   } else if (response.status == 456) {
     throw new Error(
       "You have exceeded your monthly DeepL API quota. You will be able to continue translating next month. For more information, check your account on the DeepL website."

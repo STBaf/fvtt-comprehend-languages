@@ -11,8 +11,11 @@ import {
   translate_text,
   determineNewName,
 } from "./lib";
+
 declare const CONST: any;
 declare const game: Game;
+declare const ui: any;
+
 export interface Translator<T> {
   translateButton(documentToTranslate: T): Promise<void>;
 }
@@ -73,10 +76,13 @@ export class JournalEntryTranslator implements Translator<JournalEntry> {
     const pages = documentToTranslate.pages;
     let newName: string = await determineNewName(documentToTranslate);        
 
+     ui.notifications?.info(`[Comprehend Languages] Start Import ${documentToTranslate.documentName}`);     
+
     const newPages = (await PromisePool
       .for(pages)
       .withConcurrency(1)
       .useCorrespondingResults()
+      .onTaskStarted((item, pool) => { ui.notifications?.info(`[Comprehend Languages] Working on ${item.name}`); })
       .process(async (page: JournalEntryPage) => {
           let r = await this.translateSinglePage(page, token, target_lang);
           // spend a short wait time after a Journal page to prevent http 429 too many requests on DeepL - yes, makes translate slow but make it completing the task
