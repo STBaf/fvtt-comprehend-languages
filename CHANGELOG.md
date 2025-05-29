@@ -1,3 +1,8 @@
+## [2.3.0] (2025-05-29)
+Adding own Reverse Proxy to the DeepL API to prevent the "Fetch to fail" Error message.
+Since the proxy address is not configurable at the moment do not use this release if you don't trust me using my proxy to circumvent DEEPLs CORS Policy.
+Your request will include your API key and your content which will pass through the proxy
+
 ## [2.2.3](https://github.com/Meneltamar/fvtt-comprehend-languages/compare/v2.2.2...v2.2.3) (2023-06-29)
 
 

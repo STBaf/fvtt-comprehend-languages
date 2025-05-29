@@ -168,7 +168,7 @@ export async function translate_text(
   );
 
   let response = await fetch(
-    "https://api-free.deepl.com/v2/translate?" + data,
+    "https://deepl-api-proxy.stbaf.de/v2/translate?" + data,
     {
       method: "GET",
     }
