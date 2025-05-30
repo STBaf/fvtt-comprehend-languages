@@ -87,6 +87,37 @@ export class ComprehendLanguages {
 
     game.settings.register(
       ComprehendLanguagesStatic.ID,
+      ComprehendLanguagesStatic.SETTINGS.PROXYTYPE,
+      {
+        name: "Proxy",
+        config: true,
+        hint: "Which proxy to use",
+        type: String,
+        default: "CorsProxy",
+        choices: {
+          CorsProxy: "CorsProxy.io",
+          DeepLApiProxySTB: "STBs DeepL API Proxy",
+          OwnProxy: "Manual entered Proxy"
+        },        
+        scope: "world",
+      }
+    );
+
+    game.settings.register(
+      ComprehendLanguagesStatic.ID,
+      ComprehendLanguagesStatic.SETTINGS.OWNPROXY,
+      {
+        name: "Proxy Address",
+        config: true,
+        hint: "Proxy Address for manual enter Proxy mode",
+        type: String,
+        default: "",
+        scope: "world"
+      }
+    );    
+
+    game.settings.register(
+      ComprehendLanguagesStatic.ID,
       ComprehendLanguagesStatic.SETTINGS.FORMALITY,
       {
         name: "Formality",

@@ -198,8 +198,24 @@ export async function translate_text(
     )}&target_lang=${target_lang}&source_lang=EN&tag_handling=html&formality=${formality}`
   );
 
+  let proxyAddress : string = game.settings.get(
+    ComprehendLanguagesStatic.ID,
+    ComprehendLanguagesStatic.SETTINGS.PROXYTYPE
+  ) as string; 
+
+  let proxyUrl : string = game.settings.get(
+    ComprehendLanguagesStatic.ID,
+    ComprehendLanguagesStatic.SETTINGS.OWNPROXY
+  ) as string;
+
+  if (proxyAddress === 'CorsProxy') {
+    proxyUrl = 'https://corsproxy.io/?url=https://api-free.deepl.com/v2/translate?';
+  } else if (proxyAddress === 'DeepLApiProxySTB') {
+    proxyUrl = 'https://deepl-api-proxy.stbaf.de/v2/translate?';
+  }
+
   let response = await fetch(
-    "https://deepl-api-proxy.stbaf.de/v2/translate?" + data,
+    proxyUrl + data,
     {
       method: "GET",
     }

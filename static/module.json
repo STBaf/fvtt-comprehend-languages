@@ -2,19 +2,14 @@
   "id": "comprehend-languages-stbaf",
   "title": "Comprehend Languages (STBs Proxy Edition)",
   "description": "Fork of Comprehend Languages module STB Proxied version",
-  "version": "2.3.1",
+  "version": "2.4.0",
   "library": "false",  
   "compatibility":{
     "minimum": "11",
-    "verified": "11.302",
+    "verified": "12",
     "maximum": "12"
   },
   "authors": [
-    {
-      "name": "Meneltamar",
-      "url": "https://github.com/meneltamar",
-      "discord": "Meneltamar#3331"
-    },
     {
       "name": "STB",
       "url": "https://www.stbaf.de",
