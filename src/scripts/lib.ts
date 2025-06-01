@@ -208,18 +208,25 @@ export async function translate_text(
     ComprehendLanguagesStatic.SETTINGS.OWNPROXY
   ) as string;
 
-  if (proxyAddress === 'CorsProxy') {
-    proxyUrl = 'https://corsproxy.io/?url=https://api-free.deepl.com/v2/translate?';
-  } else if (proxyAddress === 'DeepLApiProxySTB') {
-    proxyUrl = 'https://deepl-api-proxy.stbaf.de/v2/translate?';
-  }
+  let response;
 
-  let response = await fetch(
-    proxyUrl + data,
+  if (proxyAddress === 'CorsProxy') {
+    proxyUrl = 'https://corsproxy.io/?url=';
+    let fetchdata: string = 'https://api-free.deepl.com/v2/translate?' + data.toString();
+    let fetchDataEncoded : string = encodeURIComponent(fetchdata);
+    response = await fetch( proxyUrl + fetchDataEncoded,
     {
       method: "GET",
-    }
-  );
+    });
+  } else if (proxyAddress === 'DeepLApiProxySTB') {
+    proxyUrl = 'https://deepl-api-proxy.stbaf.de/v2/translate?';
+    response = await fetch(proxyUrl + data,
+      {
+        method: "GET",
+      }
+    );
+  }
+
   if (response.status == 200) {
     let translation: DeepLTranslation = await response.json();
     return translation.translations[0].text;
