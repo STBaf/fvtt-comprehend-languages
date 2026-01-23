@@ -192,13 +192,7 @@ export async function translate_text(
   newText = replaceAll(newText, `@Playlist[`, `@UUID[Playlist.`);
   newText = replaceAll(newText, `@Compendium[`, `@UUID[Compendium.`);
 
-  let data = new URLSearchParams(
-    `auth_key=${token}&text=${encodeURIComponent(
-      newText
-    )}&target_lang=${target_lang}&source_lang=EN&tag_handling=html&formality=${formality}`
-  );
-
-  let proxyAddress : string = game.settings.get(
+  /*let proxyAddress : string = game.settings.get(
     ComprehendLanguagesStatic.ID,
     ComprehendLanguagesStatic.SETTINGS.PROXYTYPE
   ) as string; 
@@ -206,12 +200,19 @@ export async function translate_text(
   let proxyUrl : string = game.settings.get(
     ComprehendLanguagesStatic.ID,
     ComprehendLanguagesStatic.SETTINGS.OWNPROXY
-  ) as string;
+  ) as string;*/
 
   let response;
 
-  if (proxyAddress === 'CorsProxy') {
-    proxyUrl = 'https://corsproxy.io/?url=';
+  /*if (proxyAddress === 'CorsProxy') {
+
+    let data = new URLSearchParams(
+      `auth_key=${token}&text=${encodeURIComponent(
+        newText
+      )}&target_lang=${target_lang}&source_lang=EN&tag_handling=html&formality=${formality}`
+    );
+
+    let proxyUrl = 'https://corsproxy.io/?url=';
     let fetchdata: string = 'https://api-free.deepl.com/v2/translate?' + data.toString();
     let fetchDataEncoded : string = encodeURIComponent(fetchdata);
     response = await fetch( proxyUrl + fetchDataEncoded,
@@ -219,13 +220,25 @@ export async function translate_text(
       method: "GET",
     });
   } else if (proxyAddress === 'DeepLApiProxySTB') {
-    proxyUrl = 'https://deepl-api-proxy.stbaf.de/v2/translate?';
+   */
+
+    let data = new URLSearchParams(
+      `text=${encodeURIComponent(
+        newText
+      )}&target_lang=${target_lang}&source_lang=EN&tag_handling=html&formality=${formality}`
+    );
+
+    let proxyUrl = 'https://deepl-api-proxy.stbaf.de/v2/translate?';
+    let authheader = `DeepL-Auth-Key ${token}`;    
     response = await fetch(proxyUrl + data,
       {
         method: "GET",
+        headers: {
+          "Authorization": authheader
+        }
       }
     );
-  }
+  //}
 
   if (response.status == 200) {
     let translation: DeepLTranslation = await response.json();

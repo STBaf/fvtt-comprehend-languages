@@ -15,7 +15,7 @@ export class ComprehendLanguagesStatic {
     TRANSLATE_JOURNAL_NAME: "translate-journal-name",
     IN_PLACE: "in-place",
     FORMALITY: "formality",
-    PROXYTYPE: "proxy-type",
-    OWNPROXY: "proxy-address"
+    //PROXYTYPE: "proxy-type",
+    //OWNPROXY: "proxy-address"
   };
 }

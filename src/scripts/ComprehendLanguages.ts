@@ -85,7 +85,7 @@ export class ComprehendLanguages {
       }
     );
 
-    game.settings.register(
+    /*game.settings.register(
       ComprehendLanguagesStatic.ID,
       ComprehendLanguagesStatic.SETTINGS.PROXYTYPE,
       {
@@ -101,9 +101,9 @@ export class ComprehendLanguages {
         },        
         scope: "world",
       }
-    );
+    );*/
 
-    game.settings.register(
+    /*game.settings.register(
       ComprehendLanguagesStatic.ID,
       ComprehendLanguagesStatic.SETTINGS.OWNPROXY,
       {
@@ -114,7 +114,7 @@ export class ComprehendLanguages {
         default: "",
         scope: "world"
       }
-    );    
+    );*/    
 
     game.settings.register(
       ComprehendLanguagesStatic.ID,
