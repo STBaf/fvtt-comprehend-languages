@@ -7,9 +7,7 @@ const [outDir] = (() => {
   const outDir =
     buildMode === "production"
       ? path.join(__dirname, "dist/")
-      : path.join(
-          "/home/ubuntu/foundrydata11/Data/modules/comprehend-languages"
-        );
+      : path.join(__dirname, "dev-dist/");
   return [outDir];
 })();
 module.exports = {
