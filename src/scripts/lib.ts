@@ -16,16 +16,13 @@ Hooks.once("init", () => {
 });
 
 Hooks.on("getHeaderControlsApplicationV2", (sheet, menu) => {
-  console.debug("stb-debug", sheet);
-  console.debug("stb-debug", menu);
   menu.push({
     "icon": "fas fa-eye",
     "label": "Translate",
     "visible": true,
     "action": "translateJournal",
     "onClick": function(e) {
-      console.log("stb-debug onclick", sheet);
-      ComprehendLanguagesTranslator.buttonTranslateJournalEntry(sheet);
+      ComprehendLanguagesTranslator.buttonTranslateJournalEntry(sheet.document);
     }
   });
 });
