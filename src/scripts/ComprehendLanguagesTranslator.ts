@@ -93,16 +93,23 @@ export class JournalEntryTranslator implements Translator<JournalEntry> {
       
     if (newPages) {
 
-      let newDocument = await documentToTranslate.clone();
-      newDocument.pages.clear();
+      // let newDocument = await documentToTranslate.clone();
+      //newDocument.pages.clear();
 
       const newJournalEntry = await JournalEntry.createDocuments([        
-        { newDocument, name: newName, folder: folder },
+        { ...documentToTranslate, name: newName, folder: folder },
       ]);
-      await newJournalEntry[0].createEmbeddedDocuments(
+
+      let newJE = newJournalEntry[0];
+
+      let docCollection = newJE.getEmbeddedCollection("pages");
+      docCollection.forEach(p => p.delete());
+
+      await newJE.createEmbeddedDocuments(
         "JournalEntryPage",
         newPages.flat()
-      );
+      );      
+            
     }
   }
 
