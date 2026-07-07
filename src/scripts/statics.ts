@@ -1,5 +1,5 @@
 export class ComprehendLanguagesStatic {
-  static ID = "comprehend-languages";
+  static ID = "comprehend-languages-stbaf";
 
   static FLAGS = {
     COMPREHENDLANGUAGES: "COMPREHENDLANGUAGES",

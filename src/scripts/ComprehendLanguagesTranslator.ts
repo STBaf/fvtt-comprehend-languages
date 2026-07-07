@@ -92,8 +92,12 @@ export class JournalEntryTranslator implements Translator<JournalEntry> {
       )).results;    
       
     if (newPages) {
-      const newJournalEntry = await JournalEntry.createDocuments([
-        { ...documentToTranslate, name: newName, folder: folder },
+
+      let newDocument = await documentToTranslate.clone();
+      newDocument.pages.clear();
+
+      const newJournalEntry = await JournalEntry.createDocuments([        
+        { newDocument, name: newName, folder: folder },
       ]);
       await newJournalEntry[0].createEmbeddedDocuments(
         "JournalEntryPage",
